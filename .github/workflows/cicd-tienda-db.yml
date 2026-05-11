@@ -41,12 +41,14 @@ jobs:
           --parameters '{
             "commands":[
               "set -e",
-              "aws ecr get-login-password --region ${{ secrets.AWS_REGION }} | docker login --username AWS --password-stdin ${{ secrets.ECR_REGISTRY }}",
-              "docker pull ${{ secrets.ECR_REPO_URL_DB }}:latest",
+              "aws ecr get-login-password --region '${{ secrets.AWS_REGION }}' | docker login --username AWS --password-stdin '${{ secrets.ECR_REGISTRY }}'",
               "docker stop tienda-db || true",
               "docker rm tienda-db || true",
               "docker volume rm dbdata || true",
-              "docker run -d --name tienda-db -p 3306:3306 -e MYSQL_ROOT_PASSWORD=${{ secrets.MYSQL_ROOT_PASSWORD }} -e MYSQL_DATABASE=${{ secrets.MYSQL_DATABASE }} -v dbdata:/var/lib/mysql ${{ secrets.ECR_REPO_URL_DB }}:latest"
+              "docker pull '${{ secrets.ECR_REPO_URL_DB }}:latest'",
+              "docker run -d --name tienda-db -p 3306:3306 -e MYSQL_ROOT_PASSWORD='${{ secrets.MYSQL_ROOT_PASSWORD }}' -e MYSQL_DATABASE='${{ secrets.MYSQL_DATABASE }}' -v dbdata:/var/lib/mysql '${{ secrets.ECR_REPO_URL_DB }}:latest'",
+              "sleep 25",
+              "docker logs tienda-db"
             ]
           }' \
           --output text
