@@ -46,8 +46,7 @@ jobs:
               "docker stop tienda-db || true",
               "docker rm tienda-db || true",
               "docker volume rm dbdata || true",
-              docker run -d --name tienda-db -p 3306:3306 -e MYSQL_ROOT_PASSWORD=${{ secrets.MYSQL_ROOT_PASSWORD }} -e MYSQL_DATABASE=${{ secrets.MYSQL_DATABASE }} -v dbdata:/var/lib/mysql ${{ secrets.ECR_REPO_URL_DB }}:latest,
+              "docker run -d --name tienda-db -p 3306:3306 -e MYSQL_ROOT_PASSWORD=${{ secrets.MYSQL_ROOT_PASSWORD }} -e MYSQL_DATABASE=${{ secrets.MYSQL_DATABASE }} -v dbdata:/var/lib/mysql ${{ secrets.ECR_REPO_URL_DB }}:latest"
             ]
           }' \
           --output text
-           
