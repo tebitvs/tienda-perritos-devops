@@ -1,8 +1,6 @@
 CREATE DATABASE IF NOT EXISTS tienda_perritos;
 USE tienda_perritos;
 
-DROP TABLE IF EXISTS productos;
-
 CREATE TABLE productos (
     id INT AUTO_INCREMENT PRIMARY KEY,
     nombre VARCHAR(100) NOT NULL,
