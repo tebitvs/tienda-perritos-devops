@@ -13,6 +13,7 @@ const {
   DB_PORT = 3306,
 } = process.env;
 
+// HOLA
 app.use(cors());
 app.use(express.json());
 
