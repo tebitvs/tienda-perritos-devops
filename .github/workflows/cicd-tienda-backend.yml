@@ -5,7 +5,7 @@ on:
     branches: [ "main" ]
     paths:
       - "backend/**"
- 
+
 jobs:
   build-push-deploy-backend:
     runs-on: ubuntu-latest
@@ -35,15 +35,17 @@ jobs:
     - name: Desplegar Backend vía SSM
       run: |
         aws ssm send-command \
-          --instance-ids ${{ secrets.EC2_BACKEND_INSTANCE_ID }} \
+          --instance-ids "${{ secrets.EC2_BACKEND_INSTANCE_ID }}" \
           --document-name "AWS-RunShellScript" \
           --comment "Actualizar tienda-backend desde ECR" \
-          --parameters '{"commands":[
-            "set -e",
-            "aws ecr get-login-password --region '${{ secrets.AWS_REGION }}' | docker login --username AWS --password-stdin ${{ secrets.ECR_REGISTRY }}",
-            "docker pull ${{ secrets.ECR_REPO_URL_BACKEND }}:latest",
-            "docker stop tienda-backend || true",
-            "docker rm tienda-backend || true",
-            "docker run -d --name tienda-backend -p 3001:3001 ${{ secrets.ECR_REPO_URL_BACKEND }}:latest"
-          ]}' \
+          --parameters commands="[
+            'set -e',
+            'aws ecr get-login-password --region ${{ secrets.AWS_REGION }} | docker login --username AWS --password-stdin ${{ secrets.ECR_REGISTRY }}',
+            'docker pull ${{ secrets.ECR_REPO_URL_BACKEND }}:latest',
+            'docker stop tienda-backend || true',
+            'docker rm tienda-backend || true',
+            'docker run -d --name tienda-backend -p 3001:3001 -e DB_HOST=${{ secrets.DB_HOST }} -e DB_USER=${{ secrets.DB_USER }} -e DB_PASSWORD=${{ secrets.DB_PASSWORD }} -e DB_NAME=${{ secrets.DB_NAME }} -e DB_PORT=${{ secrets.DB_PORT }} ${{ secrets.ECR_REPO_URL_BACKEND }}:latest',
+            'sleep 10',
+            'docker logs tienda-backend'
+          ]" \
           --output text
